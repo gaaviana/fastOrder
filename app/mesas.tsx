@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import React from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,7 +7,7 @@ export default function Mesas() {
   const mesas = [1, 2, 3, 4, 5, 6];
 
   const abrirMesa = (numero: number) => {
-    Alert.alert(`Mesa ${numero}`, `Abrindo mesa ${numero}...`);
+    router.push(`/mesa/${numero}`)
   };
 
   return (
@@ -18,7 +18,7 @@ export default function Mesas() {
         <View style={estilos.grid}>
           {mesas.map((mesa) => (
             <View key={mesa} style={estilos.cardMesa}>
-              <Text style={estilos.numeroMesa}>Mesa</Text>
+              <Text style={estilos.numeroMesa}>Mesa {mesa}</Text>
               <Pressable style={estilos.botao} onPress={() => abrirMesa(mesa)}>
                 <Text style={estilos.textoBotao}>Acessar</Text>
               </Pressable>
@@ -60,6 +60,7 @@ const estilos = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#000",
   },
 
   botao: {
