@@ -34,6 +34,10 @@ export default function Mesa() {
     setItensPendentes((listaAtual) => [...listaAtual, item]);
   };
 
+  const removerItem = (id: number) => {
+    setItensMesa((listaAtual) => listaAtual.filter((_, i) => i !== id));
+  };
+
   const filtroCardapio = cardapio.filter((item) =>
     item.nome.toLowerCase().includes(pesquisa.toLowerCase())
   );
@@ -80,7 +84,7 @@ export default function Mesa() {
   const fecharConta = async () => {
     alert(`Conta da Mesa ${id} fechada. Total: ${formatarPreco(total)}`);
     console.log("Historico da mesa: ", itensMesa);
-    
+
     setItensMesa([]);
     await limparMesa(String(id));
   };
@@ -95,10 +99,18 @@ export default function Mesa() {
           {itensMesa.length === 0 ? (
             <Text style={estilos.vazio}>Nenhum item adicionado</Text>
           ) : (
-            itensMesa.map((item, index) => (
-              <Text key={index} style={estilos.itemMesa}>
-                {item.nome} - {formatarPreco(item.preco)}
-              </Text>
+            itensMesa.map((item, id) => (
+              <View key={id} style={estilos.itemMesa}>
+                <Text style={estilos.itemSelecionado}>
+                  {item.nome} - {formatarPreco(item.preco)}
+                </Text>
+
+                <Pressable
+                  onPress={() => removerItem(id)}
+                >
+                  <Text style={estilos.remover}>X</Text>
+                </Pressable>
+              </View>
             ))
           )}
           <Text style={estilos.total}>Total: {formatarPreco(total)}</Text>
@@ -164,8 +176,20 @@ const estilos = StyleSheet.create({
   },
 
   itemMesa: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 5,
+    marginVertical: 5,
+  },
+
+  itemSelecionado: {
     fontSize: 16,
-    marginBottom: 5,
+  },
+
+  remover: {
+    color: "#ff4d4d",
+    fontWeight: "bold",
   },
 
   botoes: {
