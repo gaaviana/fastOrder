@@ -14,8 +14,10 @@ import {
   limparMesa,
   salvarMesa,
 } from "../../src/services/storage-mesas";
+import Loading from "../../src/components/Loading";
 
 export default function Mesa() {
+  const [loading, setLoading] = useState(false);
   const { id } = useLocalSearchParams();
 
   const cardapio = [
@@ -53,7 +55,7 @@ export default function Mesa() {
 
   // Carrega itens da mesa do AsyncStorage ao abrir a tela
   useEffect(() => {
-    if (!id) return; // se id não existe ainda, não faz nada
+    if (!id) return;
     const buscarMesa = async () => {
       const itens = await carregarMesa(String(id));
       setItensMesa(itens);
@@ -77,17 +79,25 @@ export default function Mesa() {
     console.log("Enviando itens pendentes:", itensPendentes);
     alert("Itens novos enviados para a cozinha");
 
-    // Limpa itens pendentes depois de enviar
     setItensPendentes([]);
   };
 
   const fecharConta = async () => {
-    alert(`Conta da Mesa ${id} fechada. Total: ${formatarPreco(total)}`);
-    console.log("Historico da mesa: ", itensMesa);
+    setLoading(true);
 
-    setItensMesa([]);
     await limparMesa(String(id));
+    setItensMesa([]);
+
+    setTimeout(() => {
+      setLoading(false);
+      alert(`Conta da Mesa ${id} fechada. Total: ${formatarPreco(total)}`);
+      console.log("Historico da mesa: ", itensMesa);
+    }, 1500);
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -105,9 +115,7 @@ export default function Mesa() {
                   {item.nome} - {formatarPreco(item.preco)}
                 </Text>
 
-                <Pressable
-                  onPress={() => removerItem(id)}
-                >
+                <Pressable onPress={() => removerItem(id)}>
                   <Text style={estilos.remover}>X</Text>
                 </Pressable>
               </View>
