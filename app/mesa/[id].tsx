@@ -14,8 +14,10 @@ import {
   limparMesa,
   salvarMesa,
 } from "../../src/services/storage-mesas";
+import Loading from "../../src/components/Loading";
 
 export default function Mesa() {
+  const [loading, setLoading] = useState(false);
   const { id } = useLocalSearchParams();
 
   const cardapio = [
@@ -53,7 +55,7 @@ export default function Mesa() {
 
   // Carrega itens da mesa do AsyncStorage ao abrir a tela
   useEffect(() => {
-    if (!id) return; // se id não existe ainda, não faz nada
+    if (!id) return;
     const buscarMesa = async () => {
       const itens = await carregarMesa(String(id));
       setItensMesa(itens);
@@ -77,73 +79,79 @@ export default function Mesa() {
     console.log("Enviando itens pendentes:", itensPendentes);
     alert("Itens novos enviados para a cozinha");
 
-    // Limpa itens pendentes depois de enviar
     setItensPendentes([]);
   };
 
   const fecharConta = async () => {
-    alert(`Conta da Mesa ${id} fechada. Total: ${formatarPreco(total)}`);
-    console.log("Historico da mesa: ", itensMesa);
+    setLoading(true);
 
-    setItensMesa([]);
     await limparMesa(String(id));
+    setItensMesa([]);
+
+    setTimeout(() => {
+      setLoading(false);
+      alert(`Conta da Mesa ${id} fechada. Total: ${formatarPreco(total)}`);
+      console.log("Historico da mesa: ", itensMesa);
+    }, 1500);
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <>
       <Stack.Screen options={{ headerTitle: `Mesa ${id}` }} />
 
       <SafeAreaView style={estilos.container}>
-        <ScrollView>
-          <View style={estilos.mesa}>
-            <Text style={estilos.titulo}>Itens adicionados</Text>
-            {itensMesa.length === 0 ? (
-              <Text style={estilos.vazio}>Nenhum item adicionado</Text>
-            ) : (
-              itensMesa.map((item, id) => (
-                <View key={id} style={estilos.itemMesa}>
-                  <Text style={estilos.itemSelecionado}>
-                    {item.nome} - {formatarPreco(item.preco)}
-                  </Text>
+        <View style={estilos.mesa}>
+          <Text style={estilos.titulo}>Itens adicionados</Text>
+          {itensMesa.length === 0 ? (
+            <Text style={estilos.vazio}>Nenhum item adicionado</Text>
+          ) : (
+            itensMesa.map((item, id) => (
+              <View key={id} style={estilos.itemMesa}>
+                <Text style={estilos.itemSelecionado}>
+                  {item.nome} - {formatarPreco(item.preco)}
+                </Text>
 
-                  <Pressable onPress={() => removerItem(id)}>
-                    <Text style={estilos.remover}>X</Text>
-                  </Pressable>
-                </View>
-              ))
-            )}
-            <Text style={estilos.total}>Total: {formatarPreco(total)}</Text>
-          </View>
+                <Pressable onPress={() => removerItem(id)}>
+                  <Text style={estilos.remover}>X</Text>
+                </Pressable>
+              </View>
+            ))
+          )}
+          <Text style={estilos.total}>Total: {formatarPreco(total)}</Text>
+        </View>
 
-          <View style={estilos.botoes}>
-            <Pressable onPress={enviarPedido} style={estilos.btnEnviar}>
-              <Text style={estilos.textoBotao}>Enviar</Text>
+        <View style={estilos.botoes}>
+          <Pressable onPress={enviarPedido} style={estilos.btnEnviar}>
+            <Text style={estilos.textoBotao}>Enviar</Text>
+          </Pressable>
+          <Pressable onPress={fecharConta} style={estilos.btnFechar}>
+            <Text style={estilos.textoBotao}>Fechar Conta</Text>
+          </Pressable>
+        </View>
+
+        <TextInput
+          placeholder="Pesquisar no cardápio..."
+          value={pesquisa}
+          onChangeText={setPesquisa}
+          style={estilos.pesquisa}
+        />
+
+        <ScrollView style={estilos.cardapio}>
+          <Text style={estilos.titulo}>Cardápio</Text>
+          {filtroCardapio.map((item) => (
+            <Pressable
+              key={item.id}
+              onPress={() => adicionarItem(item)}
+              style={estilos.cardItem}
+            >
+              <Text style={estilos.nome}>{item.nome}</Text>
+              <Text style={estilos.preco}>{formatarPreco(item.preco)}</Text>
             </Pressable>
-            <Pressable onPress={fecharConta} style={estilos.btnFechar}>
-              <Text style={estilos.textoBotao}>Fechar Conta</Text>
-            </Pressable>
-          </View>
-
-          <TextInput
-            placeholder="Pesquisar no cardápio..."
-            value={pesquisa}
-            onChangeText={setPesquisa}
-            style={estilos.pesquisa}
-          />
-
-          <View style={estilos.cardapio}>
-            <Text style={estilos.titulo}>Cardápio</Text>
-            {filtroCardapio.map((item) => (
-              <Pressable
-                key={item.id}
-                onPress={() => adicionarItem(item)}
-                style={estilos.cardItem}
-              >
-                <Text style={estilos.nome}>{item.nome}</Text>
-                <Text style={estilos.preco}>{formatarPreco(item.preco)}</Text>
-              </Pressable>
-            ))}
-          </View>
+          ))}
         </ScrollView>
       </SafeAreaView>
     </>
