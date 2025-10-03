@@ -1,18 +1,29 @@
 import { router, Stack } from "expo-router";
-import React from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Loading from "../src/components/Loading"; // ajuste o caminho se estiver diferente
 
 export default function Mesas() {
+  const [loading, setLoading] = useState(false);
   const mesas = [1, 2, 3, 4, 5, 6];
 
   const abrirMesa = (numero: number) => {
-    router.push(`/mesa/${numero}`)
+    setLoading(true); // ativa o loading
+    // simula tempo de processamento ou envio de dados
+    setTimeout(() => {
+      router.push(`/mesa/${numero}`);
+    }, 1500); // 1.5 segundos de delay (ajuste se necessário)
   };
+
+  // Mostra o componente de loading enquanto `loading` for true
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, headerTitle: "mesas"}} />
+      <Stack.Screen options={{ headerShown: true, headerTitle: "mesas" }} />
 
       <SafeAreaView style={estilos.container}>
         <View style={estilos.grid}>
