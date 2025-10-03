@@ -4,9 +4,7 @@ import {
   Alert,
   Button,
   Image,
-  Pressable,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";

@@ -25,7 +25,7 @@ export default function Layout() {
       </View>
     </SafeAreaProvider>
   );
-}
+}''
 
 const estilos = StyleSheet.create({
   container: {
