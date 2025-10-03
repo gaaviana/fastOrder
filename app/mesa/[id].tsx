@@ -104,19 +104,17 @@ export default function Mesa() {
       <Stack.Screen options={{ headerTitle: `Mesa ${id}` }} />
 
       <SafeAreaView style={estilos.container}>
-        <ScrollView>
-          <View style={estilos.mesa}>
-            <Text style={estilos.titulo}>Itens adicionados</Text>
-            {itensMesa.length === 0 ? (
-              <Text style={estilos.vazio}>Nenhum item adicionado</Text>
-            ) : (
-              itensMesa.map((item, id) => (
-                <View key={id} style={estilos.itemMesa}>
-                  <Text style={estilos.itemSelecionado}>
-                    {item.nome} - {formatarPreco(item.preco)}
-                  </Text>
+        <View style={estilos.mesa}>
+          <Text style={estilos.titulo}>Itens adicionados</Text>
+          {itensMesa.length === 0 ? (
+            <Text style={estilos.vazio}>Nenhum item adicionado</Text>
+          ) : (
+            itensMesa.map((item, id) => (
+              <View key={id} style={estilos.itemMesa}>
+                <Text style={estilos.itemSelecionado}>
+                  {item.nome} - {formatarPreco(item.preco)}
+                </Text>
 
-<<<<<<< HEAD
                 <Pressable onPress={() => removerItem(id)}>
                   <Text style={estilos.remover}>X</Text>
                 </Pressable>
@@ -125,46 +123,35 @@ export default function Mesa() {
           )}
           <Text style={estilos.total}>Total: {formatarPreco(total)}</Text>
         </View>
-=======
-                  <Pressable onPress={() => removerItem(id)}>
-                    <Text style={estilos.remover}>X</Text>
-                  </Pressable>
-                </View>
-              ))
-            )}
-            <Text style={estilos.total}>Total: {formatarPreco(total)}</Text>
-          </View>
->>>>>>> e632b44be6da7404e379fc63758f9606a5a25cdf
 
-          <View style={estilos.botoes}>
-            <Pressable onPress={enviarPedido} style={estilos.btnEnviar}>
-              <Text style={estilos.textoBotao}>Enviar</Text>
+        <View style={estilos.botoes}>
+          <Pressable onPress={enviarPedido} style={estilos.btnEnviar}>
+            <Text style={estilos.textoBotao}>Enviar</Text>
+          </Pressable>
+          <Pressable onPress={fecharConta} style={estilos.btnFechar}>
+            <Text style={estilos.textoBotao}>Fechar Conta</Text>
+          </Pressable>
+        </View>
+
+        <TextInput
+          placeholder="Pesquisar no cardápio..."
+          value={pesquisa}
+          onChangeText={setPesquisa}
+          style={estilos.pesquisa}
+        />
+
+        <ScrollView style={estilos.cardapio}>
+          <Text style={estilos.titulo}>Cardápio</Text>
+          {filtroCardapio.map((item) => (
+            <Pressable
+              key={item.id}
+              onPress={() => adicionarItem(item)}
+              style={estilos.cardItem}
+            >
+              <Text style={estilos.nome}>{item.nome}</Text>
+              <Text style={estilos.preco}>{formatarPreco(item.preco)}</Text>
             </Pressable>
-            <Pressable onPress={fecharConta} style={estilos.btnFechar}>
-              <Text style={estilos.textoBotao}>Fechar Conta</Text>
-            </Pressable>
-          </View>
-
-          <TextInput
-            placeholder="Pesquisar no cardápio..."
-            value={pesquisa}
-            onChangeText={setPesquisa}
-            style={estilos.pesquisa}
-          />
-
-          <View style={estilos.cardapio}>
-            <Text style={estilos.titulo}>Cardápio</Text>
-            {filtroCardapio.map((item) => (
-              <Pressable
-                key={item.id}
-                onPress={() => adicionarItem(item)}
-                style={estilos.cardItem}
-              >
-                <Text style={estilos.nome}>{item.nome}</Text>
-                <Text style={estilos.preco}>{formatarPreco(item.preco)}</Text>
-              </Pressable>
-            ))}
-          </View>
+          ))}
         </ScrollView>
       </SafeAreaView>
     </>
