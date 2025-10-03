@@ -5,12 +5,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 export default function Layout() {
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={'default'} backgroundColor="#000"/>
+      <StatusBar barStyle={'default'} backgroundColor="#FF9800"/>
       <Stack 
         screenOptions={
           {
             headerStyle: {
-              backgroundColor: '#000'
+              backgroundColor: '#FF9800'
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
@@ -38,7 +38,7 @@ const estilos = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#000',
+    backgroundColor: '#FF9800',
     padding: 15,
     alignItems: 'center'
   },

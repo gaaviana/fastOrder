@@ -4,22 +4,24 @@ import {
   Alert,
   Button,
   Image,
+  Pressable,
   StyleSheet,
+  Text,
   TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
-  const [senha, setSenha] = useState("")
-   const router = useRouter();
+  const [senha, setSenha] = useState("");
+  const router = useRouter();
 
-   // tive que fazer para zerar o valor da senha apos voltar par a atela de login
-   useFocusEffect(
+  // tive que fazer para zerar o valor da senha apos voltar par a atela de login
+  useFocusEffect(
     useCallback(() => {
-      setSenha('')
+      setSenha("");
     }, [])
-   )
+  );
 
   const validacaoSimples = () => {
     if (senha === "1234") {
@@ -29,18 +31,16 @@ export default function Home() {
     }
   };
 
-
   return (
     <>
       <Stack.Screen options={{ headerShown: false, headerTitle: "Login" }} />
 
       <SafeAreaView style={estilos.container}>
         <View style={estilos.form}>
-
           <Image
-            source={require('../assets/logoTxt.png')}
+            source={require("../assets/logoTxt.png")}
             style={estilos.imagem}
-            resizeMode='contain'
+            resizeMode="contain"
           />
           <TextInput
             placeholder="Digite a senha de acesso"
@@ -51,7 +51,9 @@ export default function Home() {
           />
 
           <View style={estilos.botao}>
-            <Button title="Entrar" color="#000" onPress={validacaoSimples}/>
+            <Pressable style={{width: "100%", alignItems: 'center'}} onPress={validacaoSimples}>
+              <Text style={estilos.txtBotao}>Entrar</Text>
+            </Pressable>
           </View>
         </View>
       </SafeAreaView>
@@ -62,13 +64,13 @@ export default function Home() {
 const estilos = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#f9f9f9',
+    justifyContent: "center",
+    backgroundColor: "#fff",
     padding: 20,
   },
 
   form: {
-    width: '100%',
+    width: "100%",
     maxWidth: 350,
   },
 
@@ -76,21 +78,30 @@ const estilos = StyleSheet.create({
     width: 350,
     height: 350,
     marginBottom: 30,
-   
   },
 
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 10,
     padding: 15,
     marginBottom: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     fontSize: 16,
   },
 
   botao: {
     borderRadius: 10,
-    overflow: 'hidden'
+    overflow: "hidden",
+    backgroundColor: "#FF9800",
+    alignItems: "center",
+    padding: 15,
+    
   },
+
+  txtBotao: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: 'bold'
+  }
 });

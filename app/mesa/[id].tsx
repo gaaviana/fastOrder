@@ -154,11 +154,11 @@ const estilos = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#fff",
   },
 
   mesa: {
-    backgroundColor: "#fff",
+    backgroundColor: "#B3BB3",
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
@@ -188,7 +188,7 @@ const estilos = StyleSheet.create({
   },
 
   remover: {
-    color: "#ff4d4d",
+    color: "#FF4D4D",
     fontWeight: "bold",
   },
 
@@ -206,7 +206,7 @@ const estilos = StyleSheet.create({
     alignItems: "center",
   },
   btnFechar: {
-    backgroundColor: "#E53935",
+    backgroundColor: "#FF4D4D",
     padding: 12,
     borderRadius: 8,
     flex: 1,
