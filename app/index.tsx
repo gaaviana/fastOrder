@@ -48,6 +48,8 @@ export default function Home() {
             style={estilos.input}
             value={senha}
             onChangeText={setSenha}
+            onSubmitEditing={validacaoSimples}
+            
           />
 
           <View style={estilos.botao}>
