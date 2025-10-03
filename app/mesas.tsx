@@ -12,7 +12,7 @@ export default function Mesas() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, headerTitle: "mesas" }} />
+      <Stack.Screen options={{ headerShown: true, headerTitle: "mesas"}} />
 
       <SafeAreaView style={estilos.container}>
         <View style={estilos.grid}>
@@ -34,7 +34,7 @@ const estilos = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#fff",
   },
 
   grid: {
@@ -64,7 +64,7 @@ const estilos = StyleSheet.create({
   },
 
   botao: {
-    backgroundColor: "#000",
+    backgroundColor: "#FF9800",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
