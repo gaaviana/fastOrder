@@ -75,6 +75,8 @@ export default function Mesa() {
     try {
       await enviarPedidos(itensPendentes, id);
       alert("Itens enviados para a cozinha");
+      console.log(itensPendentes, id);
+      
       setItensPendentes([]);
     } catch (erro) {
       console.error(erro);
