@@ -15,6 +15,7 @@ import {
   salvarMesa,
 } from "../../src/services/storage-mesas";
 import Loading from "../../src/components/Loading";
+import { enviarPedidos } from "@/src/lib/pedidos";
 
 export default function Mesa() {
   const [loading, setLoading] = useState(false);
@@ -70,16 +71,15 @@ export default function Mesa() {
   }, [id, itensMesa]);
 
   // Envia apenas os itens pendentes para a cozinha
-  const enviarPedido = () => {
-    if (itensPendentes.length === 0) {
-      alert("Nenhum item novo para enviar!");
-      return;
+  const enviarPedido = async () => {
+    try {
+      await enviarPedidos(itensPendentes, id);
+      alert("Itens enviados para a cozinha");
+      setItensPendentes([]);
+    } catch (erro) {
+      console.error(erro);
+      alert(erro);
     }
-
-    console.log("Enviando itens pendentes:", itensPendentes);
-    alert("Itens novos enviados para a cozinha");
-
-    setItensPendentes([]);
   };
 
   const fecharConta = async () => {
