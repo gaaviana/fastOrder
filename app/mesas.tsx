@@ -1,29 +1,35 @@
 import { router, Stack } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import Loading from "../src/components/Loading"; // ajuste o caminho se estiver diferente
 
 export default function Mesas() {
   const [loading, setLoading] = useState(false);
   const mesas = [1, 2, 3, 4, 5, 6];
 
+  // Reseta o loading toda vez que a tela volta a estar em foco
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(false);
+    }, [])
+  );
+
   const abrirMesa = (numero: number) => {
-    setLoading(true); // ativa o loading
-    // simula tempo de processamento ou envio de dados
+    setLoading(true);
     setTimeout(() => {
       router.push(`/mesa/${numero}`);
-    }, 1500); // 1.5 segundos de delay (ajuste se necessário)
+    }, 1500); // simula carregamento de 1.5s (opcional)
   };
 
-  // Mostra o componente de loading enquanto `loading` for true
   if (loading) {
     return <Loading />;
   }
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, headerTitle: "mesas" }} />
+      <Stack.Screen options={{ headerShown: true, headerTitle: "Mesas" }} />
 
       <SafeAreaView style={estilos.container}>
         <View style={estilos.grid}>
