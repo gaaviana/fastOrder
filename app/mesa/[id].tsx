@@ -1,4 +1,4 @@
-import { Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   Pressable,
@@ -29,30 +29,12 @@ export default function Mesa() {
     setItensNovos,
   } = useMesa(String(id));
 
-  const [pesquisa, setPesquisa] = useState("");
 
-  const cardapio = [
-    { id: 1, nome: "Pizza Margherita", preco: 30 },
-    { id: 2, nome: "Refrigerante", preco: 5 },
-    { id: 3, nome: "Hambúrguer", preco: 25 },
-    { id: 4, nome: "Batata frita", preco: 15 },
-    { id: 5, nome: "Batata frita", preco: 15 },
-    { id: 6, nome: "Batata frita", preco: 15 },
-    { id: 7, nome: "Batata frita", preco: 15 },
-    { id: 8, nome: "Batata frita", preco: 15 },
-    { id: 9, nome: "Batata frita", preco: 15 },
-    { id: 10, nome: "Batata frita", preco: 15 },
-    { id: 11, nome: "Batata frita", preco: 15 },
-    { id: 12, nome: "Batata frita", preco: 15 },
-    { id: 13, nome: "Batata frita", preco: 15 },
-    { id: 14, nome: "Batata frita", preco: 15 },
-  ];
+
 
   if (loading) return <Loading />;
 
-  const filtro = cardapio.filter((i) =>
-    i.nome.toLowerCase().includes(pesquisa.toLowerCase())
-  );
+ 
 
   return (
     <>
@@ -89,26 +71,9 @@ export default function Mesa() {
           </Pressable>
         </View>
 
-        <TextInput
-          placeholder="Pesquisar no cardápio..."
-          value={pesquisa}
-          onChangeText={setPesquisa}
-          style={estilos.pesquisa}
-        />
-
-        <ScrollView style={estilos.cardapio}>
-          <Text style={estilos.titulo}>Cardápio</Text>
-          {filtro.map((item) => (
-            <Pressable
-              key={item.id}
-              onPress={() => adicionarItem(item)}
-              style={estilos.cardItem}
-            >
-              <Text style={estilos.nome}>{item.nome}</Text>
-              <Text style={estilos.preco}>{formatarPreco(item.preco)}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
+          <Pressable onPress={() => router.push(`/mesa/${id}/cardapio`)} style={estilos.btnAdicionar}>
+            <Text style={estilos.textoBotao}>Adicionar Item</Text>
+          </Pressable>
       </SafeAreaView>
     </>
   );
@@ -160,6 +125,7 @@ const estilos = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 15,
+    flexWrap: 'wrap'
   },
   btnEnviar: {
     backgroundColor: "#4CAF50",
@@ -177,28 +143,15 @@ const estilos = StyleSheet.create({
     marginLeft: 5,
     alignItems: "center",
   },
+  btnAdicionar: {
+    backgroundColor: "#504dffff",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
   textoBotao: { color: "#fff", fontWeight: "bold" },
 
-  pesquisa: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    marginBottom: 15,
-  },
 
-  cardapio: { flex: 1 },
-  cardItem: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  nome: { fontSize: 16 },
-  preco: { fontSize: 16, fontWeight: "bold" },
   total: {
     fontSize: 20,
     fontWeight: "bold",
