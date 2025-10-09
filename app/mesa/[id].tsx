@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Loading from "../../src/components/Loading";
 import { enviarPedidos } from "@/src/lib/pedidos";
 import { useMesa } from "@/src/hooks/useMesa";
-import { formatarPreco } from "@/src/services/mesas-utils";
+import { formatarPreco, removerItemLista } from "@/src/services/mesas-utils";
 
 export default function Mesa() {
   const { id } = useLocalSearchParams();
@@ -24,6 +24,7 @@ export default function Mesa() {
     adicionarItem,
     removerItem,
     fecharConta,
+    enviarParaCozinha,
     limpar,
     setItensNovos,
   } = useMesa(String(id));
@@ -35,13 +36,17 @@ export default function Mesa() {
     { id: 2, nome: "Refrigerante", preco: 5 },
     { id: 3, nome: "Hambúrguer", preco: 25 },
     { id: 4, nome: "Batata frita", preco: 15 },
+    { id: 5, nome: "Batata frita", preco: 15 },
+    { id: 6, nome: "Batata frita", preco: 15 },
+    { id: 7, nome: "Batata frita", preco: 15 },
+    { id: 8, nome: "Batata frita", preco: 15 },
+    { id: 9, nome: "Batata frita", preco: 15 },
+    { id: 10, nome: "Batata frita", preco: 15 },
+    { id: 11, nome: "Batata frita", preco: 15 },
+    { id: 12, nome: "Batata frita", preco: 15 },
+    { id: 13, nome: "Batata frita", preco: 15 },
+    { id: 14, nome: "Batata frita", preco: 15 },
   ];
-
-  const enviarPedido = async () => {
-    await enviarPedidos(itensNovos, id);
-    alert("Itens enviados para a cozinha!");
-    setItensNovos([]);
-  };
 
   if (loading) return <Loading />;
 
@@ -54,6 +59,7 @@ export default function Mesa() {
       <Stack.Screen options={{ headerTitle: `Mesa ${id}` }} />
 
       <SafeAreaView style={estilos.container}>
+        <Text>Mesas/Mesa {id}</Text>
         <View style={estilos.mesa}>
           <Text style={estilos.titulo}>Itens adicionados</Text>
           {itensMesa.length === 0 ? (
@@ -65,7 +71,7 @@ export default function Mesa() {
                   {item.nome} - {formatarPreco(item.preco)} ({item.quantidade}x)
                 </Text>
 
-                <Pressable onPress={() => removerItem(id)}>
+                <Pressable onPress={() => removerItem(item.id)}>
                   <Text style={estilos.remover}>X</Text>
                 </Pressable>
               </View>
@@ -75,7 +81,7 @@ export default function Mesa() {
         </View>
 
         <View style={estilos.botoes}>
-          <Pressable onPress={enviarPedido} style={estilos.btnEnviar}>
+          <Pressable onPress={enviarParaCozinha} style={estilos.btnEnviar}>
             <Text style={estilos.textoBotao}>Enviar</Text>
           </Pressable>
           <Pressable onPress={fecharConta} style={estilos.btnFechar}>

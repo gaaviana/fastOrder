@@ -10,6 +10,7 @@ import {
   formatarPreco,
   removerItemLista,
 } from "../services/mesas-utils";
+import { enviarPedidos } from "../lib/pedidos";
 
 export function useMesa(id: string) {
   const [itensMesa, setItensMesa] = useState<any[]>([]);
@@ -36,15 +37,32 @@ export function useMesa(id: string) {
 
   const removerItem = (idItem: number) => {
     setItensMesa((lista) => removerItemLista(lista, idItem));
+    setItensNovos((lista) => removerItemLista(lista, idItem));
+  };
+
+  const enviarParaCozinha = async () => {
+    if (itensNovos.length === 0) {
+      alert("Nenhum item novo para enviar.");
+      return;
+    }
+    setLoading(true);
+    await enviarPedidos(itensNovos, id);
+    console.log(itensNovos);
+    setItensNovos([]);
+    setTimeout(() => {
+      setLoading(false);
+      alert(`Itens enviados para a cozinha!`);
+    });
   };
 
   const limpar = async () => {
     setLoading(true);
     await limparMesa(id);
     setItensMesa([]);
+    setItensNovos([]);
     setTimeout(() => setLoading(false), 1000);
   };
-  
+
   const fecharConta = async () => {
     setLoading(true);
     await limparMesa(String(id));
@@ -54,7 +72,7 @@ export function useMesa(id: string) {
       setLoading(false);
       alert(`Conta da Mesa ${id} fechada. Total: ${formatarPreco(total)}`);
       console.log("Histórico da mesa:", itensMesa);
-    }, 1500);
+    });
   };
 
   const total = calcularTotal(itensMesa);
@@ -67,6 +85,7 @@ export function useMesa(id: string) {
     adicionarItem,
     removerItem,
     fecharConta,
+    enviarParaCozinha,
     limpar,
     setItensNovos,
   };

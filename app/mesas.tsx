@@ -20,7 +20,7 @@ export default function Mesas() {
     setLoading(true);
     setTimeout(() => {
       router.push(`/mesa/${numero}`);
-    }, 1500); // simula carregamento de 1.5s (opcional)
+    }); // simula carregamento de 1.5s (opcional)
   };
 
   if (loading) {
