@@ -1,98 +1,70 @@
-import { useEffect, useState } from "react";
-import {
-  carregarMesa,
-  limparMesa,
-  salvarMesa,
-} from "../services/storage-mesas";
-import {
-  adicionarItemLista,
-  calcularTotal,
-  formatarPreco,
-  removerItemLista,
-} from "../services/mesas-utils";
+import { useState, useEffect, useCallback } from "react";
+import { carregarMesa, salvarMesa, limparMesa } from "../services/storage-mesas";
+import { adicionarItemLista, removerItemLista, calcularTotal } from "../services/mesas-utils";
 import { enviarPedidos } from "../lib/pedidos";
 
-export function useMesa(id: string) {
+export function useMesa(mesaId: string) {
   const [itensMesa, setItensMesa] = useState<any[]>([]);
-  const [itensNovos, setItensNovos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [mesaCarregada, setMesaCarregada] = useState(false);
 
-  useEffect(() => {
-    if (!id) return;
-    const buscarMesa = async () => {
-      const itens = await carregarMesa(id);
-      setItensMesa(itens);
-      setMesaCarregada(true);
-      setLoading(false);
-    };
-    buscarMesa();
-  }, [id]);
+  const carregar = useCallback(async () => {
+    setLoading(true);
+    const data = await carregarMesa(mesaId);
+    setItensMesa(data);
+    setLoading(false);
+    setMesaCarregada(true);
+  }, [mesaId]);
 
   useEffect(() => {
-    if (id) salvarMesa(id, itensMesa);
-  }, [id, itensMesa]);
+    carregar();
+  }, [carregar]);
 
-  const adicionarItem = (item: any) => {
-    setItensMesa((lista) => adicionarItemLista(lista, item));
-    setItensNovos((lista) => adicionarItemLista(lista, item));
-
-    alert(`${item.nome} adicionado!`);
+  const adicionarItem = async (item: any) => {
+    const novaLista = adicionarItemLista(itensMesa, item);
+    setItensMesa(novaLista);
+    alert("Item adicionado")
+    await salvarMesa(mesaId, novaLista);
   };
 
-  const removerItem = (idItem: number) => {
-    setItensMesa((lista) => removerItemLista(lista, idItem));
-    setItensNovos((lista) => removerItemLista(lista, idItem));
-  };
-
-  const enviarParaCozinha = async () => {
-    if (itensNovos.length === 0) {
-      alert("Nenhum item novo para enviar.");
-      return;
-    }
-    setLoading(true);
-    await enviarPedidos(itensNovos, id);
-    console.log(itensNovos);
-    setItensNovos([]);
-    setTimeout(() => {
-      setLoading(false);
-      alert(`Itens enviados para a cozinha!`);
-    });
-  };
-
-  const limpar = async () => {
-    setLoading(true);
-    await limparMesa(id);
-    setItensMesa([]);
-    setItensNovos([]);
-    setTimeout(() => setLoading(false), 1000);
-  };
-
-  const fecharConta = async () => {
-    setLoading(true);
-    await limparMesa(String(id));
-    setItensMesa([]);
-
-    setTimeout(() => {
-      setLoading(false);
-      alert(`Conta da Mesa ${id} fechada. Total: ${formatarPreco(total)}`);
-      console.log("Histórico da mesa:", itensMesa);
-    });
+  const removerItem = async (itemId: number) => {
+    const novaLista = removerItemLista(itensMesa, itemId);
+    setItensMesa(novaLista);
+    await salvarMesa(mesaId, novaLista);
   };
 
   const total = calcularTotal(itensMesa);
 
+const enviarParaCozinha = async () => {
+  if (itensMesa.length === 0) return alert("Não há itens para enviar!");
+
+  try {
+    await enviarPedidos(itensMesa, mesaId); 
+    await limparMesa(mesaId);               
+    setItensMesa([]);                        
+    alert("Pedido enviado para a cozinha!");
+  } catch (error) {
+    alert(error);                   
+  }
+};
+
+  const fecharConta = async () => {
+    if (itensMesa.length === 0) return alert("Mesa vazia!");
+    
+    await limparMesa(mesaId);
+    setItensMesa([]);
+    alert("Conta fechada!");
+  };
+
   return {
     itensMesa,
-    itensNovos,
     total,
     loading,
     mesaCarregada,
     adicionarItem,
     removerItem,
-    fecharConta,
     enviarParaCozinha,
-    limpar,
-    setItensNovos,
+    fecharConta,
+    recarregarMesa: carregar, 
   };
 }

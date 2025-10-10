@@ -40,26 +40,26 @@ export default function Cardapio() {
   );
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerTitle: "Cardápio",
-          headerBackVisible: true, // botão sempre visível
-          headerBackTitleVisible: false, // remove o texto "Back"
+   <Stack.Screen
+  options={{
+    headerTitle: " Cardápio",
+    headerLeft: () => (
+      <Pressable
+        onPress={() => {
+          if (itensMesa.length === 0) {
+            router.replace("/mesas");
+          } else {
+            router.replace(`/mesa/${id}`); 
+          }
         }}
-        listeners={{
-          beforeRemove: (e) => {
-            e.preventDefault(); // cancela a ação padrão do botão
+        style={{ marginRight: 25 }}
+      >
+         <Ionicons name="arrow-back" size={24} color="#fff" />
+      </Pressable>
+    ),
+  }}
+/>
 
-            if (itensMesa.length === 0) {
-              // sem itens → volta para a tela de Mesas
-              router.replace("/mesas");
-            } else {
-              // com itens → volta para a mesa selecionada
-              router.replace(`/mesa/${id}`);
-            }
-          },
-        }}
-      />
 
       <SafeAreaView style={estilos.container}>
         <TextInput

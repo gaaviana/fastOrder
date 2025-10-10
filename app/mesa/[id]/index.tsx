@@ -1,4 +1,4 @@
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
 import {
   Pressable,
@@ -21,7 +21,14 @@ export default function Mesa() {
     fecharConta,
     enviarParaCozinha,
     mesaCarregada,
+    recarregarMesa
   } = useMesa(String(id));
+
+  useFocusEffect(
+  React.useCallback(() => {
+    recarregarMesa(); 
+  }, [recarregarMesa])
+);
 
   useEffect(() => {
     if (mesaCarregada && itensMesa.length === 0) {
