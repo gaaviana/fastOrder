@@ -1,19 +1,20 @@
 import { useMesa } from "@/src/hooks/useMesa";
 import { formatarPreco } from "@/src/services/mesas-utils";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   Pressable,
-  SafeAreaViewBase,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Cardapio() {
   const { id } = useLocalSearchParams();
-  const { adicionarItem } = useMesa(String(id));
+  const { adicionarItem, itensMesa } = useMesa(String(id));
 
   const [pesquisa, setPesquisa] = useState("");
 
@@ -39,9 +40,28 @@ export default function Cardapio() {
   );
   return (
     <>
-      <Stack.Screen options={{ headerTitle: `Cardapio` }} />
+      <Stack.Screen
+        options={{
+          headerTitle: "Cardápio",
+          headerBackVisible: true, // botão sempre visível
+          headerBackTitleVisible: false, // remove o texto "Back"
+        }}
+        listeners={{
+          beforeRemove: (e) => {
+            e.preventDefault(); // cancela a ação padrão do botão
 
-      <SafeAreaViewBase style={estilos.container}>
+            if (itensMesa.length === 0) {
+              // sem itens → volta para a tela de Mesas
+              router.replace("/mesas");
+            } else {
+              // com itens → volta para a mesa selecionada
+              router.replace(`/mesa/${id}`);
+            }
+          },
+        }}
+      />
+
+      <SafeAreaView style={estilos.container}>
         <TextInput
           placeholder="Pesquisar no cardápio..."
           value={pesquisa}
@@ -62,7 +82,7 @@ export default function Cardapio() {
             </Pressable>
           ))}
         </ScrollView>
-      </SafeAreaViewBase>
+      </SafeAreaView>
     </>
   );
 }

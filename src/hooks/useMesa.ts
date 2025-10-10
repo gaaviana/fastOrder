@@ -16,12 +16,15 @@ export function useMesa(id: string) {
   const [itensMesa, setItensMesa] = useState<any[]>([]);
   const [itensNovos, setItensNovos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [mesaCarregada, setMesaCarregada] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     const buscarMesa = async () => {
       const itens = await carregarMesa(id);
       setItensMesa(itens);
+      setMesaCarregada(true);
+      setLoading(false);
     };
     buscarMesa();
   }, [id]);
@@ -33,6 +36,8 @@ export function useMesa(id: string) {
   const adicionarItem = (item: any) => {
     setItensMesa((lista) => adicionarItemLista(lista, item));
     setItensNovos((lista) => adicionarItemLista(lista, item));
+
+    alert(`${item.nome} adicionado!`);
   };
 
   const removerItem = (idItem: number) => {
@@ -82,6 +87,7 @@ export function useMesa(id: string) {
     itensNovos,
     total,
     loading,
+    mesaCarregada,
     adicionarItem,
     removerItem,
     fecharConta,

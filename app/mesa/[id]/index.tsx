@@ -1,64 +1,58 @@
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Loading from "../../src/components/Loading";
-import { enviarPedidos } from "@/src/lib/pedidos";
+import Loading from "../../../src/components/Loading";
 import { useMesa } from "@/src/hooks/useMesa";
-import { formatarPreco, removerItemLista } from "@/src/services/mesas-utils";
+import { formatarPreco } from "@/src/services/mesas-utils";
 
 export default function Mesa() {
   const { id } = useLocalSearchParams();
   const {
     itensMesa,
-    itensNovos,
     total,
     loading,
-    adicionarItem,
     removerItem,
     fecharConta,
     enviarParaCozinha,
-    limpar,
-    setItensNovos,
+    mesaCarregada,
   } = useMesa(String(id));
 
-
-
+  useEffect(() => {
+    if (mesaCarregada && itensMesa.length === 0) {
+      router.replace(`/mesa/${id}/cardapio`);
+    }
+  }, [mesaCarregada, itensMesa]);
 
   if (loading) return <Loading />;
-
- 
 
   return (
     <>
       <Stack.Screen options={{ headerTitle: `Mesa ${id}` }} />
 
       <SafeAreaView style={estilos.container}>
-        <Text>Mesas/Mesa {id}</Text>
+        <Text>Mesas / Mesa {id}</Text>
+
         <View style={estilos.mesa}>
           <Text style={estilos.titulo}>Itens adicionados</Text>
-          {itensMesa.length === 0 ? (
-            <Text style={estilos.vazio}>Nenhum item adicionado</Text>
-          ) : (
-            itensMesa.map((item, id) => (
-              <View key={id} style={estilos.itemMesa}>
-                <Text style={estilos.itemSelecionado}>
-                  {item.nome} - {formatarPreco(item.preco)} ({item.quantidade}x)
-                </Text>
 
-                <Pressable onPress={() => removerItem(item.id)}>
-                  <Text style={estilos.remover}>X</Text>
-                </Pressable>
-              </View>
-            ))
-          )}
+          {itensMesa.map((item, i) => (
+            <View key={i} style={estilos.itemMesa}>
+              <Text style={estilos.itemSelecionado}>
+                {item.nome} - {formatarPreco(item.preco)} ({item.quantidade}x)
+              </Text>
+
+              <Pressable onPress={() => removerItem(item.id)}>
+                <Text style={estilos.remover}>X</Text>
+              </Pressable>
+            </View>
+          ))}
+
           <Text style={estilos.total}>Total: {formatarPreco(total)}</Text>
         </View>
 
@@ -71,9 +65,12 @@ export default function Mesa() {
           </Pressable>
         </View>
 
-          <Pressable onPress={() => router.push(`/mesa/${id}/cardapio`)} style={estilos.btnAdicionar}>
-            <Text style={estilos.textoBotao}>Adicionar Item</Text>
-          </Pressable>
+        <Pressable
+          onPress={() => router.push(`/mesa/${id}/cardapio`)}
+          style={estilos.btnAdicionar}
+        >
+          <Text style={estilos.textoBotao}>Adicionar Item</Text>
+        </Pressable>
       </SafeAreaView>
     </>
   );
@@ -85,25 +82,17 @@ const estilos = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
-
   mesa: {
-    backgroundColor: "#B3BB3",
+    backgroundColor: "#fff",
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
   },
-
   titulo: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
   },
-
-  vazio: {
-    fontSize: 14,
-    color: "#555",
-  },
-
   itemMesa: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -111,21 +100,18 @@ const estilos = StyleSheet.create({
     padding: 5,
     marginVertical: 5,
   },
-
   itemSelecionado: {
     fontSize: 16,
   },
-
   remover: {
     color: "#FF4D4D",
     fontWeight: "bold",
   },
-
   botoes: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 15,
-    flexWrap: 'wrap'
+    flexWrap: "wrap",
   },
   btnEnviar: {
     backgroundColor: "#4CAF50",
@@ -144,14 +130,15 @@ const estilos = StyleSheet.create({
     alignItems: "center",
   },
   btnAdicionar: {
-    backgroundColor: "#504dffff",
+    backgroundColor: "#504dff",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
   },
-  textoBotao: { color: "#fff", fontWeight: "bold" },
-
-
+  textoBotao: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
   total: {
     fontSize: 20,
     fontWeight: "bold",
