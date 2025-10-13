@@ -42,7 +42,7 @@ export default function Cardapio() {
     <>
    <Stack.Screen
   options={{
-    headerTitle: " Cardápio",
+    headerTitle: ` Cardápio / Mesa ${id}`,
     headerLeft: () => (
       <Pressable
         onPress={() => {
