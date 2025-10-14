@@ -1,11 +1,11 @@
-import { router, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
-import React, { useEffect } from "react";
 import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+  router,
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+} from "expo-router";
+import React, { useEffect } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Loading from "../../../src/components/Loading";
 import { useMesa } from "@/src/hooks/useMesa";
@@ -22,17 +22,17 @@ export default function Mesa() {
     fecharConta,
     enviarParaCozinha,
     mesaCarregada,
-    recarregarMesa
+    recarregarMesa,
   } = useMesa(String(id));
 
   useFocusEffect(
-  React.useCallback(() => {
-    recarregarMesa(); 
-  }, [recarregarMesa])
-);
+    React.useCallback(() => {
+      recarregarMesa();
+    }, [recarregarMesa])
+  );
 
   useEffect(() => {
-    if (mesaCarregada && todosItens.length === 0) {
+    if (mesaCarregada && (todosItens?.length ?? 0) === 0) {
       router.replace(`/mesa/${id}/cardapio`);
     }
   }, [mesaCarregada, todosItens]);

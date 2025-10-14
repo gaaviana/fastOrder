@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Cardapio() {
   const { id } = useLocalSearchParams();
-  const { adicionarItem, itensMesa } = useMesa(String(id));
+  const { adicionarItem, todosItens: itensMesa } = useMesa(String(id));
 
   const [pesquisa, setPesquisa] = useState("");
 
