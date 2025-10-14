@@ -14,7 +14,8 @@ import { formatarPreco } from "@/src/services/mesas-utils";
 export default function Mesa() {
   const { id } = useLocalSearchParams();
   const {
-    itensMesa,
+    todosItens,
+    itensNovos,
     total,
     loading,
     removerItem,
@@ -31,10 +32,10 @@ export default function Mesa() {
 );
 
   useEffect(() => {
-    if (mesaCarregada && itensMesa.length === 0) {
+    if (mesaCarregada && todosItens.length === 0) {
       router.replace(`/mesa/${id}/cardapio`);
     }
-  }, [mesaCarregada, itensMesa]);
+  }, [mesaCarregada, todosItens]);
 
   if (loading) return <Loading />;
 
@@ -46,9 +47,9 @@ export default function Mesa() {
         <Text>Mesas / Mesa {id}</Text>
 
         <View style={estilos.mesa}>
-          <Text style={estilos.titulo}>Itens adicionados</Text>
+          <Text style={estilos.titulo}>Todos os itens da mesa</Text>
 
-          {itensMesa.map((item, i) => (
+          {todosItens.map((item, i) => (
             <View key={i} style={estilos.itemMesa}>
               <Text style={estilos.itemSelecionado}>
                 {item.nome} - {formatarPreco(item.preco)} ({item.quantidade}x)
@@ -62,6 +63,21 @@ export default function Mesa() {
 
           <Text style={estilos.total}>Total: {formatarPreco(total)}</Text>
         </View>
+
+        {itensNovos.length > 0 && (
+          <View style={estilos.mesa}>
+            <Text style={estilos.titulo}>Itens novos para enviar</Text>
+
+            {itensNovos.map((item, i) => (
+              <View key={i} style={estilos.itemMesa}>
+                <Text style={estilos.itemNovo}>
+                  {item.nome} - {formatarPreco(item.preco)} ({item.quantidade}x)
+                </Text>
+                <Text style={estilos.statusNovo}>NOVO</Text>
+              </View>
+            ))}
+          </View>
+        )}
 
         <View style={estilos.botoes}>
           <Pressable onPress={enviarParaCozinha} style={estilos.btnEnviar}>
@@ -152,5 +168,19 @@ const estilos = StyleSheet.create({
     marginTop: 10,
     textAlign: "right",
     color: "#333",
+  },
+  itemNovo: {
+    fontSize: 16,
+    color: "#2196F3",
+    fontWeight: "bold",
+  },
+  statusNovo: {
+    color: "#FF9800",
+    fontWeight: "bold",
+    fontSize: 12,
+    backgroundColor: "#FFF3E0",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
 });
