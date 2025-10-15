@@ -35,16 +35,19 @@ export function useMesa(mesaId: string) {
 
   // Adiciona um item à mesa
   const adicionarItem = async (item: any) => {
-    // Atualiza todos os itens da mesa (soma quantidade se existir)
-    const novaListaTodos = adicionarItemLista(todosItens, item);
+    // Validação mínima
+    if (!item.nome || item.preco === undefined) {
+      return alert("Item inválido! Nome ou preço ausente.");
+    }
 
-    // Cria um novo registro em itensNovos
+    // Cria um novo registro (sempre separado, sem juntar)
     const novoRegistro = {
       ...item,
-      quantidade: 1,
+      quantidade: item.quantidade ?? 1,
       enviado: false,
-      // pedido_uuid será gerado no momento do envio
     };
+
+    const novaListaTodos = [...todosItens, novoRegistro];
     const novaListaNovos = [...itensNovos, novoRegistro];
 
     setTodosItens(novaListaTodos);
@@ -68,41 +71,46 @@ export function useMesa(mesaId: string) {
   const total = calcularTotal(todosItens);
 
   // Envia itens novos para a cozinha
-  const enviarParaCozinha = async () => {
-    if (itensNovos.length === 0) return alert("Não há itens novos para enviar!");
+ // Envia itens novos para a cozinha
+const enviarParaCozinha = async () => {
+  if (itensNovos.length === 0) return alert("Não há itens novos para enviar!");
 
-    try {
-      // Gera um pedido_uuid único para este envio
-      const pedidoUUID = `${mesaId}-${Date.now()}`;
+  try {
+    const pedidoUUID = `${mesaId}-${Date.now()}`;
 
-      // Adiciona pedido_uuid a cada item novo
-      const itensParaEnviar = itensNovos.map(item => ({
-        ...item,
-        pedido_uuid: pedidoUUID
-      }));
+    // Cria os itens a serem enviados, garantindo todos os campos
+    const itensParaEnviar = itensNovos.map(item => ({
+      mesa_id: String(mesaId),
+      item_nome: item.nome ?? item.item_nome ?? "Item sem nome",
+      preco: (item.preco ?? 0) * (item.quantidade ?? 1),
+      quantidade: item.quantidade ?? 1,
+      status: "pendente",
+      pedido_uuid: pedidoUUID,
+    }));
 
-      console.log("Itens que serão enviados:", itensParaEnviar);
+    console.log("Itens que serão enviados:", itensParaEnviar);
 
-      // Envia para o banco
-      await enviarPedidos(itensParaEnviar, mesaId, pedidoUUID);
+    // Envia para o banco passando mesaId e pedidoUUID
+    await enviarPedidos(itensParaEnviar, mesaId, pedidoUUID);
 
-      // Marca os itens como enviados
-      const atualizados = todosItens.map(item =>
-        itensParaEnviar.find(i => i.nome === item.nome && !item.enviado)
-          ? { ...item, enviado: true, pedido_uuid: pedidoUUID }
-          : item
-      );
-      setTodosItens(atualizados);
+    // Marca os itens como enviados no estado
+    const atualizados = todosItens.map(item =>
+      itensNovos.includes(item)
+        ? { ...item, enviado: true, pedido_uuid: pedidoUUID }
+        : item
+    );
 
-      // Limpa apenas os itens novos
-      setItensNovos([]);
+    setTodosItens(atualizados);
+    setItensNovos([]);
+    await salvarMesa(mesaId, atualizados);
 
-      await salvarMesa(mesaId, atualizados);
-      alert("Pedido enviado para a cozinha!");
-    } catch (error: any) {
-      alert(error.message || "Erro ao enviar pedido");
-    }
-  };
+    alert("Pedido enviado para a cozinha!");
+  } catch (error: any) {
+    console.log(error);
+    alert(error.message || "Erro ao enviar pedido");
+  }
+};
+
 
   // Fecha a conta e limpa a mesa
   const fecharConta = async () => {

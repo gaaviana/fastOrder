@@ -6,7 +6,7 @@ export async function enviarPedidos(itensPendentes, mesaId, pedidoUUID) {
   // Cada item novo vira um registro separado
   const pedidos = itensPendentes.map(item => ({
     mesa_id: String(mesaId),
-    item_nome: item.nome,
+    item_nome: item.item_nome,
     preco: item.preco * item.quantidade,
     status: "pendente",
     quantidade: item.quantidade,
@@ -16,6 +16,8 @@ export async function enviarPedidos(itensPendentes, mesaId, pedidoUUID) {
   const { error } = await supabase.from("pedidos").insert(pedidos);
 
   if (error) {
+    console.log(error);
+    
     throw new Error("Não foi possível enviar os pedidos. Tente novamente");
   }
 }
