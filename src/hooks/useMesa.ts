@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { carregarMesa, salvarMesa, limparMesa } from "../services/storage-mesas";
-import { adicionarItemLista, removerItemLista, calcularTotal } from "../services/mesas-utils";
+import { removerItemLista, calcularTotal } from "../services/mesas-utils";
 import { enviarPedidos } from "../lib/pedidos";
+import { supabase } from "../lib/supabase";
+import { Alert, Vibration } from "react-native";
 
 export function useMesa(mesaId: string) {
   const [todosItens, setTodosItens] = useState<any[]>([]);
@@ -122,6 +124,37 @@ const enviarParaCozinha = async () => {
     alert("Conta fechada!");
   };
 
+  const EscutarPedidos = async () => {
+  useEffect(() => {
+    const canal = supabase
+      .channel("pedidos-status")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "pedidos",
+          filter: 'status=eq.pronto' // opcional: filtrar apenas "pronto"
+        },
+        (payload) => {
+          const pedido = payload.new;
+          console.log("Pedido atualizado:", pedido);
+
+          // vibrar o celular
+          Vibration.vibrate(500);
+
+          // mostrar notificação simples
+          Alert.alert("Pedido pronto!", `Mesa ${pedido.mesa_id} ficou pronta.`);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(canal);
+    };
+  }, []);
+}
+
   return {
     todosItens,
     itensNovos,
@@ -133,5 +166,6 @@ const enviarParaCozinha = async () => {
     enviarParaCozinha,
     fecharConta,
     recarregarMesa: carregar,
+    EscutarPedidos,
   };
 }

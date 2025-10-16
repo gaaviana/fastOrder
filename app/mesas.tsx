@@ -1,13 +1,18 @@
-import { router, Stack } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useState, useCallback } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import Loading from "../src/components/Loading"; // ajuste o caminho se estiver diferente
+import { useMesa } from "@/src/hooks/useMesa";
 
 export default function Mesas() {
+  const { id } = useLocalSearchParams();
+  const { EscutarPedidos } = useMesa(String(id));
   const [loading, setLoading] = useState(false);
   const mesas = [1, 2, 3, 4, 5, 6];
+
+  EscutarPedidos();
 
   // Reseta o loading toda vez que a tela volta a estar em foco
   useFocusEffect(
