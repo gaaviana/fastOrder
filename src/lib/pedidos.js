@@ -7,7 +7,7 @@ export async function enviarPedidos(itensPendentes, mesaId, pedidoUUID) {
   const pedidos = itensPendentes.map(item => ({
     mesa_id: String(mesaId),
     item_nome: item.item_nome,
-    preco: item.preco * item.quantidade,
+    preco: item.preco,
     status: "pendente",
     quantidade: item.quantidade,
     pedido_uuid: pedidoUUID, 
